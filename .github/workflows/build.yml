@@ -250,7 +250,7 @@ jobs:
           args: ${{ steps.generate-args.outputs.args }}
         run: |
           echo "PATH Variable: $PATH"
-          make ${{ env.args }}
+          make ${{ env.args }} KCFLAGS="-Wno-strict-prototypes"
 
       - name: "💛 Upload Image"
         uses: actions/upload-artifact@v4
