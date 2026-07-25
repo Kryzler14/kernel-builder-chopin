@@ -14,16 +14,6 @@
         "branch": "18",
         "name": "clang-18",
         "binPath": ["bin"]
-      },
-      {
-        "url": "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-14.0.0_r67.tar.gz",
-        "name": "gcc",
-        "binPath": ["bin"]
-      },
-      {
-        "url": "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-14.0.0_r67.tar.gz",
-        "name": "gcc32",
-        "binPath": ["bin"]
       }
     ],
     "ccache": true,
@@ -32,8 +22,8 @@
       "CC": "clang-18/bin/clang",
       "externalCommand": {
         "CLANG_TRIPLE": "aarch64-linux-gnu-",
-        "CROSS_COMPILE": "gcc/bin/aarch64-linux-android-",
-        "CROSS_COMPILE_ARM32": "gcc32/bin/arm-linux-androideabi-",
+        "CROSS_COMPILE": "aarch64-linux-gnu-",
+        "CROSS_COMPILE_ARM32": "arm-linux-gnueabi-",
         "LD": "clang-18/bin/ld.lld",
         "AR": "clang-18/bin/llvm-ar",
         "NM": "clang-18/bin/llvm-nm",
