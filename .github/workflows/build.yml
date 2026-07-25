@@ -187,24 +187,31 @@ jobs:
           echo "ARCH=$ARCH" >> $GITHUB_OUTPUT
           echo "args=$args" >> $GITHUB_OUTPUT
 
-      - name: "😋 Update KernelSU"
+      - name: "😋 Setup KernelSU Next"
         working-directory: ${{ env.KERNEL_NAME }}
         env:
           arch: ${{ steps.generate-args.outputs.ARCH }}
         if: ${{ env.withKernelSU == 'true' }}
         run: |
+          if [ -d "./KernelSU-Next" ]; then
+            rm -rf "./KernelSU-Next"
+          fi
+          if [ -L "./drivers/kernelsu" ]; then
+            rm -f "./drivers/kernelsu"
+          fi
           if [ -d "./KernelSU" ]; then
             rm -rf "./KernelSU"
           fi
-          if [ -d "./drivers/kernelsu" ]; then
-            rm -rf "./drivers/kernelsu"
-          fi
 
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          curl -LSs https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh | bash -
 
+          echo -e "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
           echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_HAVE_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo -e "CONFIG_KRETPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
           echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo -e "CONFIG_EXT4_FS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo -e "CONFIG_EXT4_FS_POSIX_ACL=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo -e "CONFIG_KSU=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
           cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
       # - name: 开启lxc和docker配置

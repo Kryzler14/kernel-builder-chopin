@@ -1,9 +1,9 @@
 [
   {
     "kernelSource": {
-      "name": "bxsj-KernelSU-Proton-release",
-      "repo": "https://github.com/AOSP-13-Mediatek/kernel_xiaomi_chopin",
-      "branch": "r",
+      "name": "chopin-KernelSU-Next",
+      "repo": "https://github.com/ChopinKernels/android_kernel_chopin_android_T",
+      "branch": "T",
       "device": "chopin",
       "defconfig": "chopin_user_defconfig"
     },
@@ -16,7 +16,7 @@
         "binPath": ["bin"]
       }
     ],
-    "ccache": false,
+    "ccache": true,
     "params": {
       "ARCH": "arm64",
       "CC": "proton-clang/bin/clang",
