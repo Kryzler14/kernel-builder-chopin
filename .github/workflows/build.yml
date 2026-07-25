@@ -54,6 +54,9 @@ jobs:
       useAnykernel: ${{ matrix.repos.AnyKernel3.use }}
       release: ${{ matrix.repos.AnyKernel3.release }}
     steps:
+      - name: "😄 Checkout builder"
+        uses: actions/checkout@v4
+
       - name: "⭐ Install prerequisites"
         run: |
           sudo apt-get update
