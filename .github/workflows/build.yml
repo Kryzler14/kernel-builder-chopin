@@ -205,6 +205,9 @@ jobs:
 
           curl -LSs https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh | bash -
 
+          # Apply fix for arm64 syscall_fn_t type on 4.14 kernel
+          patch -p1 < ${{ github.workspace }}/patches/fix-syscall-fn-type.patch
+
           echo -e "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
           echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
           echo -e "CONFIG_KRETPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
