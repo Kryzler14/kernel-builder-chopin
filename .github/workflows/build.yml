@@ -216,6 +216,7 @@ jobs:
           patch -p1 < ${{ github.workspace }}/patches/fix-lsm-hook-listhead.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-klog-compat.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-file-wrapper-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-event-queue-compat.patch
           # Fix syscall_event_bridge.c: add missing uaccess.h include
           sed -i '/^#include "arch.h"/i #include <linux/uaccess.h>' KernelSU-Next/kernel/hook/syscall_event_bridge.c
           # Fix patch_memory.c for 4.14 compat (missing __pte_to_phys, copy_to_kernel_nofault, __flush_icache_range)

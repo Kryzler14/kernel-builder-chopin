@@ -1,0 +1,18 @@
+diff --git a/KernelSU-Next/kernel/infra/event_queue.h b/KernelSU-Next/kernel/infra/event_queue.h
+index b12f8c3e..d54c842d 100644
+--- a/KernelSU-Next/kernel/infra/event_queue.h
++++ b/KernelSU-Next/kernel/infra/event_queue.h
+@@ -8,7 +8,13 @@
+ #include <linux/poll.h>
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
++#include <linux/version.h>
+ #include <linux/wait.h>
++#include <linux/eventpoll.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
++#define __poll_t unsigned int
++#endif
+ 
+ #define KSU_EVENT_RECORD_FLAG_INTERNAL (1U << 0)
+ #define KSU_EVENT_QUEUE_TYPE_DROPPED ((__u16)0xFFFF)
