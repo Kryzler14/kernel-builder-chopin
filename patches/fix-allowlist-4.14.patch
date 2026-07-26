@@ -1,5 +1,5 @@
 diff --git a/KernelSU-Next/kernel/policy/allowlist.c b/KernelSU-Next/kernel/policy/allowlist.c
-index 1ff3e74a..126d5e65 100644
+index 1ff3e74a..a2af9333 100644
 --- a/KernelSU-Next/kernel/policy/allowlist.c
 +++ b/KernelSU-Next/kernel/policy/allowlist.c
 @@ -1,4 +1,5 @@
@@ -8,7 +8,11 @@ index 1ff3e74a..126d5e65 100644
  #include <linux/limits.h>
  #include <linux/rculist.h>
  #include <linux/mutex.h>
-@@ -15,6 +16,10 @@
+@@ -12,8 +13,13 @@
+ #include <linux/list.h>
+ #include <linux/printk.h>
+ #include <linux/slab.h>
++#include <linux/version.h>
  #include <linux/types.h>
  #include <linux/compiler_types.h>
  
