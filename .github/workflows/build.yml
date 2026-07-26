@@ -241,6 +241,25 @@ jobs:
           patch -p1 < ${{ github.workspace }}/patches/fix-linker-kernel-umount-4.14.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-linker-lsm-hook-4.14.patch
 
+          # SusFS integration
+          echo "=== Copying SusFS kernel module files ==="
+          cp -v ${{ github.workspace }}/susfs/fs/susfs.c ./fs/
+          cp -v ${{ github.workspace }}/susfs/fs/sus_su.c ./fs/
+          cp -v ${{ github.workspace }}/susfs/include/linux/susfs.h ./include/linux/
+          cp -v ${{ github.workspace }}/susfs/include/linux/susfs_def.h ./include/linux/
+          cp -v ${{ github.workspace }}/susfs/include/linux/sus_su.h ./include/linux/
+
+          echo "=== Applying SusFS kernel source patch ==="
+          patch -p1 < ${{ github.workspace }}/susfs/patches/50_add_susfs_in_kernel-4.14.patch || \
+            echo "WARNING: SusFS kernel patch had rejects - check logs"
+
+          echo "=== Applying SusFS KSU integration ==="
+          # Kconfig: add SusFS options to KSU Kconfig
+          cat ${{ github.workspace }}/susfs/patches/susfs_kconfig.txt >> KernelSU-Next/kernel/Kconfig
+          # Apply KSU integration patch (adapted for KSU v3.2.0)
+          patch -p1 < ${{ github.workspace }}/susfs/patches/10_enable_susfs_for_ksu-v3.2.0.patch || \
+            echo "WARNING: KSU integration patch had rejects - check logs"
+
           # Ensure required kernel config options
           grep -q "CONFIG_MODULES=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
             echo "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
