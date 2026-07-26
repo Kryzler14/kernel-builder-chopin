@@ -1,9 +1,11 @@
 diff --git a/KernelSU-Next/kernel/feature/sucompat.c b/KernelSU-Next/kernel/feature/sucompat.c
-index d5501a9b..cd52f0a9 100644
+index d5501a9b..de6264d5 100644
 --- a/KernelSU-Next/kernel/feature/sucompat.c
 +++ b/KernelSU-Next/kernel/feature/sucompat.c
-@@ -2,13 +2,18 @@
+@@ -1,13 +1,18 @@
+ #include <linux/compiler_types.h>
  #include <linux/preempt.h>
++#include <linux/version.h>
  #include <linux/printk.h>
  #include <linux/mm.h>
 +#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
@@ -14,7 +16,7 @@ index d5501a9b..cd52f0a9 100644
  #include <linux/cred.h>
  #include <linux/fs.h>
  #include <linux/types.h>
- #include <linux/version.h>
+-#include <linux/version.h>
 +#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
 +#define strncpy_from_user_nofault(dst, src, n) strncpy_from_user(dst, src, n)
 +#endif
