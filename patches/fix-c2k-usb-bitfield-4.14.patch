@@ -1,5 +1,5 @@
---- a/KernelSU-Next/drivers/misc/mediatek/c2k_usb/f_rawbulk.c
-+++ b/KernelSU-Next/drivers/misc/mediatek/c2k_usb/f_rawbulk.c
+--- a/drivers/misc/mediatek/c2k_usb/f_rawbulk.c
++++ b/drivers/misc/mediatek/c2k_usb/f_rawbulk.c
 @@ -342,7 +342,7 @@ static int rawbulk_function_setalt(struct usb_function *f,
  	struct rawbulk_function *fn = function_to_rbf(f);
  
