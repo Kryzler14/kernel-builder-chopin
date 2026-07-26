@@ -213,7 +213,8 @@ jobs:
           patch -p1 < ${{ github.workspace }}/patches/fix-pgtable-include.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-event.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-ksud.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-sucompat-strncpy.patch
+          # Fix sucompat.c for 4.14 compat (strncpy_from_user_nofault -> strncpy_from_user)
+          sed -i 's/strncpy_from_user_nofault(path/strncpy_from_user(path/g' KernelSU-Next/kernel/feature/sucompat.c
           # Fix util.h for 4.14 compat
           sed -i '/^#include "linux\/fdtable.h"/a #include <linux/uaccess.h>' KernelSU-Next/kernel/include/util.h
           sed -i '/^#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)$/,/^#endif$/c\
