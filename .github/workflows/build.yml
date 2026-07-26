@@ -220,10 +220,10 @@ jobs:
           sed -i '/^#include "asm-generic\/fixmap.h"/a\
           #include <linux/version.h>\
           #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 5, 0)\
-          #define __p4d_to_phys(p4d)  (p4d_val(p4d) & PHYS_MASK)\
-          #define __pud_to_phys(pud)  (pud_val(pud) & PHYS_MASK)\
-          #define __pmd_to_phys(pmd)  (pmd_val(pmd) & PHYS_MASK)\
-          #define __pte_to_phys(pte)  (pte_val(pte) & PHYS_MASK)\
+          #define __p4d_to_phys(p4d)  (p4d_val(p4d) \& PHYS_MASK)\
+          #define __pud_to_phys(pud)  (pud_val(pud) \& PHYS_MASK)\
+          #define __pmd_to_phys(pmd)  (pmd_val(pmd) \& PHYS_MASK)\
+          #define __pte_to_phys(pte)  (pte_val(pte) \& PHYS_MASK)\
           #endif\
           #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)\
           #define copy_to_kernel_nofault(dst, src, len) probe_kernel_write(dst, src, len)\
