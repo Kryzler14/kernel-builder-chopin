@@ -1,0 +1,23 @@
+diff --git a/KernelSU-Next/kernel/feature/kernel_umount.c b/KernelSU-Next/kernel/feature/kernel_umount.c
+--- a/KernelSU-Next/kernel/feature/kernel_umount.c
++++ b/KernelSU-Next/kernel/feature/kernel_umount.c
+@@ -41,11 +41,18 @@
+ 	.set_handler = kernel_umount_feature_set,
+ };
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
+ extern int path_umount(struct path *path, int flags);
++#endif
+ 
+ static void ksu_umount_mnt(const char *mnt, struct path *path, int flags)
+ {
+-	int err = path_umount(path, flags);
++	int err;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++	err = path_umount(path, flags);
++#else
++	err = -ENOSYS;
++#endif
+ 	if (err) {
+ 		pr_info("umount %s failed: %d\n", mnt, err);
+ 	}

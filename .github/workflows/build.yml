@@ -235,6 +235,12 @@ jobs:
           patch -p1 < ${{ github.workspace }}/patches/fix-dispatch-4.14.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-c2k-usb-bitfield-4.14.patch
 
+          # Linker fix patches (must be applied after compilation patches)
+          patch -p1 < ${{ github.workspace }}/patches/fix-linker-app-profile-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-linker-su-mount-ns-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-linker-kernel-umount-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-linker-lsm-hook-4.14.patch
+
           # Ensure required kernel config options
           grep -q "CONFIG_MODULES=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
             echo "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}

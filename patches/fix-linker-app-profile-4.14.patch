@@ -1,0 +1,13 @@
+diff --git a/KernelSU-Next/kernel/policy/app_profile.c b/KernelSU-Next/kernel/policy/app_profile.c
+--- a/KernelSU-Next/kernel/policy/app_profile.c
++++ b/KernelSU-Next/kernel/policy/app_profile.c
+@@ -101,7 +101,9 @@
+     fake->sighand = NULL;
+ #endif
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)
+     seccomp_filter_release(fake);
++#endif
+     kfree(fake);
+ }
+ 

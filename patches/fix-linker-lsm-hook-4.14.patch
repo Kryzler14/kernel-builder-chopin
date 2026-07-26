@@ -1,0 +1,22 @@
+diff --git a/KernelSU-Next/kernel/hook/lsm_hook.c b/KernelSU-Next/kernel/hook/lsm_hook.c
+--- a/KernelSU-Next/kernel/hook/lsm_hook.c
++++ b/KernelSU-Next/kernel/hook/lsm_hook.c
+@@ -137,6 +137,10 @@
+ 
+ int ksu_lsm_hook(struct ksu_lsm_hook *hook)
+ {
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0)
++	(void)hook;
++	return -ENOSYS;
++#else
+     int ret = 0;
+     struct security_hook_list *entry;
+     void *target;
+@@ -345,6 +349,7 @@
+ out_unlock:
+     mutex_unlock(&ksu_lsm_hook_lock);
+     return ret;
++#endif
+ }
+ 
+ void ksu_lsm_unhook(struct ksu_lsm_hook *hook)
