@@ -2,7 +2,19 @@ diff --git a/KernelSU-Next/kernel/infra/file_wrapper.c b/KernelSU-Next/kernel/in
 index dbad19bc..b8656eec 100644
 --- a/KernelSU-Next/kernel/infra/file_wrapper.c
 +++ b/KernelSU-Next/kernel/infra/file_wrapper.c
-@@ -99,7 +99,7 @@ static int ksu_wrapper_iopoll(struct kiocb *kiocb, struct io_comp_batch *icb,
+@@ -12,7 +12,10 @@
+ #include <linux/uaccess.h>
+ #include <linux/version.h>
+ #include <linux/mount.h>
+-
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 16, 0)
++typedef unsigned int __poll_t;
++#endif
++ 
+ #include "objsec.h"
+ 
+ #include "klog.h" // IWYU pragma: keep
+@@ -99,7 +102,7 @@ static int ksu_wrapper_iopoll(struct kiocb *kiocb, struct io_comp_batch *icb,
      kiocb->ki_filp = orig;
      return orig->f_op->iopoll(kiocb, icb, v);
  }
