@@ -1,0 +1,21 @@
+diff --git a/KernelSU-Next/kernel/policy/allowlist.c b/KernelSU-Next/kernel/policy/allowlist.c
+index 1ff3e74a..126d5e65 100644
+--- a/KernelSU-Next/kernel/policy/allowlist.c
++++ b/KernelSU-Next/kernel/policy/allowlist.c
+@@ -1,4 +1,5 @@
+ #include <linux/rcupdate.h>
++#include <linux/sched/task.h>
+ #include <linux/limits.h>
+ #include <linux/rculist.h>
+ #include <linux/mutex.h>
+@@ -15,6 +16,10 @@
+ #include <linux/types.h>
+ #include <linux/compiler_types.h>
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)
++#define TWA_RESUME true
++#endif
++
+ #include "klog.h" // IWYU pragma: keep
+ #include "ksu.h"
+ #include "runtime/ksud_boot.h"
