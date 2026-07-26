@@ -24,6 +24,7 @@
 +#define strncpy_from_user_nofault(dst, src, n) strncpy_from_user(dst, (const char __user *)(src), n)
 +#endif
 +#endif
+
 --- a/KernelSU-Next/kernel/sulog/event.c
 +++ b/KernelSU-Next/kernel/sulog/event.c
 @@ -12,6 +12,8 @@
@@ -35,6 +36,7 @@
  #include "feature/sulog.h"
  #include "infra/event_queue.h"
  #include "klog.h" // IWYU pragma: keep
+
 --- a/KernelSU-Next/kernel/runtime/ksud_integration.c
 +++ b/KernelSU-Next/kernel/runtime/ksud_integration.c
 @@ -23,6 +23,8 @@
