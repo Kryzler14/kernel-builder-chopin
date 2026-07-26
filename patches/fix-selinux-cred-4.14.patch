@@ -1,0 +1,13 @@
+diff --git a/KernelSU-Next/kernel/selinux/selinux.c b/KernelSU-Next/kernel/selinux/selinux.c
+index 43e33d9c..be700f3d 100644
+--- a/KernelSU-Next/kernel/selinux/selinux.c
++++ b/KernelSU-Next/kernel/selinux/selinux.c
+@@ -4,6 +4,9 @@
+ #include "linux/sched.h"
+ #include "objsec.h"
+ #include "linux/version.h"
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 2, 0)
++#define selinux_cred(cred) ((struct task_security_struct *)(cred)->security)
++#endif
+ #include "klog.h" // IWYU pragma: keep
+ #include "ksu.h"
