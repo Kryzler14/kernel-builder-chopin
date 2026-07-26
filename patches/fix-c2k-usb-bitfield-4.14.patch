@@ -1,29 +1,9 @@
---- a/drivers/misc/mediatek/c2k_usb/f_rawbulk.c
-+++ b/drivers/misc/mediatek/c2k_usb/f_rawbulk.c
-@@ -342,7 +342,7 @@ static int rawbulk_function_setalt(struct usb_function *f,
- 	struct rawbulk_function *fn = function_to_rbf(f);
+--- a/Makefile
++++ b/Makefile
+@@ -1001,6 +1001,7 @@
+ # change __FILE__ to the relative path from the srctree
+ KBUILD_CFLAGS	+= $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
++KBUILD_CFLAGS	+= $(call cc-option,-Wno-error=single-bit-bitfield-constant-conversion)
  
- 	C2K_NOTE("%s\n", __func__);
--	fn->activated = 1;
-+	fn->activated = 1U;
- 	rawbulk_usb_state_set(fn->activated);
- 	schedule_work(&fn->activator);
- 	return 0;
-@@ -387,7 +387,7 @@ static struct usb_function *rawbulk_function_alloc(struct usb_function_instance
- 		fn->function.disable = rawbulk_function_disable;
- 
- 		INIT_WORK(&fn->activator, do_activate);
--		fn->initialized = 1;
-+		fn->initialized = 1U;
- 	}
- 
- 	rc = usb_add_function(c, &fn->function);
-@@ -467,7 +467,7 @@ static struct usb_function *rawbulk_function_alloc_inst(struct usb_function_inst
- 		fn->function.disable = rawbulk_function_disable;
- 
- 		INIT_WORK(&fn->activator, do_activate);
--		fn->initialized = 1;
-+		fn->initialized = 1U;
- 	}
- 
- 	return &fn->function;
+ # ensure -fcf-protection is disabled when using retpoline as it is
+ # incompatible with -mindirect-branch=thunk-extern
