@@ -1,12 +1,16 @@
 diff --git a/KernelSU-Next/kernel/infra/su_mount_ns.c b/KernelSU-Next/kernel/infra/su_mount_ns.c
-index 595b93b4..ecf3ccff 100644
+index 595b93b4..29a7bb7a 100644
 --- a/KernelSU-Next/kernel/infra/su_mount_ns.c
 +++ b/KernelSU-Next/kernel/infra/su_mount_ns.c
-@@ -13,7 +13,7 @@
+@@ -13,7 +13,11 @@
  #include <linux/syscalls.h>
  #include <linux/task_work.h>
  #include <linux/version.h>
 -#include <uapi/linux/mount.h>
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
++#define ksys_close(fd) sys_close(fd)
++#define ksys_unshare(flags) sys_unshare(flags)
++#endif
 +#include <linux/mount.h>
  
  #include "arch.h"
