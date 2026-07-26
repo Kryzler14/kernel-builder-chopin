@@ -50,7 +50,7 @@ index 799246f4..e15d249c 100644
 +#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
 +	ret = fsnotify_add_inode_mark(m, inode, 0);
 +#else
-+	ret = fsnotify_add_mark(m, inode, g, 0);
++	ret = fsnotify_add_mark(m, inode, NULL, 0);
 +#endif
 +	if (ret) {
  		fsnotify_put_mark(m);
