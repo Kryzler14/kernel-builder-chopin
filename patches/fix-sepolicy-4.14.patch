@@ -1,0 +1,40 @@
+--- a/KernelSU-Next/kernel/selinux/sepolicy.c	2026-07-26 11:13:48.512866843 +0000
++++ b/KernelSU-Next/kernel/selinux/sepolicy.c	2026-07-26 11:14:03.232866844 +0000
+@@ -14,6 +14,7 @@
+ #include "ss/symtab.h"
+ 
+ #define KSU_SUPPORT_ADD_TYPE
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
+ 
+ //////////////////////////////////////////////////////
+ // Declaration
+@@ -1305,3 +1306,28 @@
+     kfree(new_pol);
+     return NULL;
+ }
++
++
++#else
++
++bool ksu_type(struct policydb *db, const char *name, const char *attr) { (void)db; (void)name; (void)attr; return false; }
++bool ksu_attribute(struct policydb *db, const char *name) { (void)db; (void)name; return false; }
++bool ksu_permissive(struct policydb *db, const char *type) { (void)db; (void)type; return false; }
++bool ksu_enforce(struct policydb *db, const char *type) { (void)db; (void)type; return false; }
++bool ksu_typeattribute(struct policydb *db, const char *type, const char *attr) { (void)db; (void)type; (void)attr; return false; }
++bool ksu_exists(struct policydb *db, const char *type) { (void)db; (void)type; return false; }
++bool ksu_allow(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *perm) { (void)db; (void)src; (void)tgt; (void)cls; (void)perm; return false; }
++bool ksu_deny(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *perm) { (void)db; (void)src; (void)tgt; (void)cls; (void)perm; return false; }
++bool ksu_auditallow(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *perm) { (void)db; (void)src; (void)tgt; (void)cls; (void)perm; return false; }
++bool ksu_dontaudit(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *perm) { (void)db; (void)src; (void)tgt; (void)cls; (void)perm; return false; }
++bool ksu_allowxperm(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *range) { (void)db; (void)src; (void)tgt; (void)cls; (void)range; return false; }
++bool ksu_auditallowxperm(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *range) { (void)db; (void)src; (void)tgt; (void)cls; (void)range; return false; }
++bool ksu_dontauditxperm(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *range) { (void)db; (void)src; (void)tgt; (void)cls; (void)range; return false; }
++bool ksu_type_transition(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *def, const char *obj) { (void)db; (void)src; (void)tgt; (void)cls; (void)def; (void)obj; return false; }
++bool ksu_type_change(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *def) { (void)db; (void)src; (void)tgt; (void)cls; (void)def; return false; }
++bool ksu_type_member(struct policydb *db, const char *src, const char *tgt, const char *cls, const char *def) { (void)db; (void)src; (void)tgt; (void)cls; (void)def; return false; }
++bool ksu_genfscon(struct policydb *db, const char *fs_name, const char *path, const char *ctx) { (void)db; (void)fs_name; (void)path; (void)ctx; return false; }
++void ksu_destroy_sepolicy(struct selinux_policy *pol) { (void)pol; }
++struct selinux_policy *ksu_dup_sepolicy(struct selinux_policy *old_pol) { (void)old_pol; return NULL; }
++
++#endif
+\ No newline at end of file

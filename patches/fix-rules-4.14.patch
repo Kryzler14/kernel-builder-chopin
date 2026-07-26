@@ -1,5 +1,5 @@
---- a/KernelSU-Next/kernel/selinux/rules.c	2026-07-26 10:55:00.332866776 +0000
-+++ kernel/selinux/rules.c	2026-07-26 10:55:47.300866779 +0000
+--- a/KernelSU-Next/kernel/selinux/rules.c	2026-07-26 10:58:59.764866790 +0000
++++ b/KernelSU-Next/kernel/selinux/rules.c	2026-07-26 10:59:56.320866794 +0000
 @@ -42,6 +42,7 @@
  
  void apply_kernelsu_rules()
@@ -8,15 +8,17 @@
      struct selinux_policy *pol, *old_pol = selinux_state.policy;
      struct policydb *db;
  
-@@ -126,6 +127,7 @@
+@@ -126,6 +127,9 @@
      reset_avc_cache();
  out_unlock:
      mutex_unlock(&selinux_state.policy_mutex);
++#else
++    pr_info("KernelSU: selinux policy not available on this kernel version\n");
 +#endif
  }
  
  #define KSU_SEPOLICY_MAX_BATCH_SIZE (8U * 1024U * 1024U)
-@@ -402,6 +404,7 @@
+@@ -402,6 +406,7 @@
  
  int handle_sepolicy(void __user *user_data, u64 data_len)
  {
@@ -24,10 +26,13 @@
      struct selinux_policy *pol, *old_pol;
      struct policydb *db;
      struct sepol_batch_cursor cursor;
-@@ -503,4 +506,6 @@
+@@ -503,4 +508,9 @@
      kvfree(payload);
  
      return ret;
-+#endif
++#else
++    (void)user_data;
++    (void)data_len;
 +    return 0;
++#endif
  }
