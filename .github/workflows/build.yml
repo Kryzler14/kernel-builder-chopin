@@ -264,9 +264,13 @@ jobs:
           echo "=== Applying SusFS KSU integration ==="
           # Kconfig: add SusFS options to KSU Kconfig
           cat ${{ github.workspace }}/susfs/patches/susfs_kconfig.txt >> KernelSU-Next/kernel/Kconfig
-          # Apply KSU integration patch (adapted for KSU v3.2.0)
-          patch -p1 < ${{ github.workspace }}/susfs/patches/10_enable_susfs_for_ksu-v3.2.0.patch || \
+          # Apply KSU integration patch targeted at KSU kernel dir (v3.2.0)
+          patch -d KernelSU-Next/kernel -p1 < ${{ github.workspace }}/susfs/patches/10_enable_susfs_for_ksu-v3.2.0.patch || \
             echo "WARNING: KSU integration patch had rejects - check logs"
+
+          echo "=== Applying KSU integration fix (ksu_try_umount + susfs_try_umount_all) ==="
+          patch -p1 < ${{ github.workspace }}/susfs/patches/54_fix_ksu_integration.patch || \
+            echo "WARNING: KSU integration fix patch had issues"
 
           # Ensure required kernel config options
           grep -q "CONFIG_MODULES=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
