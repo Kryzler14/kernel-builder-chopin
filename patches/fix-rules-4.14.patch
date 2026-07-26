@@ -1,0 +1,33 @@
+--- a/KernelSU-Next/kernel/selinux/rules.c	2026-07-26 10:55:00.332866776 +0000
++++ kernel/selinux/rules.c	2026-07-26 10:55:47.300866779 +0000
+@@ -42,6 +42,7 @@
+ 
+ void apply_kernelsu_rules()
+ {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
+     struct selinux_policy *pol, *old_pol = selinux_state.policy;
+     struct policydb *db;
+ 
+@@ -126,6 +127,7 @@
+     reset_avc_cache();
+ out_unlock:
+     mutex_unlock(&selinux_state.policy_mutex);
++#endif
+ }
+ 
+ #define KSU_SEPOLICY_MAX_BATCH_SIZE (8U * 1024U * 1024U)
+@@ -402,6 +404,7 @@
+ 
+ int handle_sepolicy(void __user *user_data, u64 data_len)
+ {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
+     struct selinux_policy *pol, *old_pol;
+     struct policydb *db;
+     struct sepol_batch_cursor cursor;
+@@ -503,4 +506,6 @@
+     kvfree(payload);
+ 
+     return ret;
++#endif
++    return 0;
+ }
