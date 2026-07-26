@@ -1,28 +1,20 @@
 diff --git a/KernelSU-Next/kernel/feature/sucompat.c b/KernelSU-Next/kernel/feature/sucompat.c
-index d5501a9b..bc5255cb 100644
+index d5501a9b..cd52f0a9 100644
 --- a/KernelSU-Next/kernel/feature/sucompat.c
 +++ b/KernelSU-Next/kernel/feature/sucompat.c
-@@ -1,15 +1,19 @@
- #include <linux/compiler_types.h>
+@@ -2,13 +2,18 @@
  #include <linux/preempt.h>
  #include <linux/printk.h>
--#include <linux/mm.h>
--#include <linux/pgtable.h>
--#include <linux/uaccess.h>
--#include <asm/current.h>
--#include <linux/cred.h>
--#include <linux/fs.h>
--#include <linux/types.h>
- #include <linux/version.h>
-+#include <linux/mm.h>
+ #include <linux/mm.h>
 +#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
-+#include <linux/pgtable.h>
+ #include <linux/pgtable.h>
 +#endif
-+#include <linux/uaccess.h>
-+#include <asm/current.h>
-+#include <linux/cred.h>
-+#include <linux/fs.h>
-+#include <linux/types.h>
+ #include <linux/uaccess.h>
+ #include <asm/current.h>
+ #include <linux/cred.h>
+ #include <linux/fs.h>
+ #include <linux/types.h>
+ #include <linux/version.h>
 +#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
 +#define strncpy_from_user_nofault(dst, src, n) strncpy_from_user(dst, src, n)
 +#endif
