@@ -216,6 +216,21 @@ jobs:
           patch -p1 < ${{ github.workspace }}/patches/fix-lsm-hook-listhead.patch
           # Fix syscall_event_bridge.c: add missing uaccess.h include
           sed -i '/^#include "arch.h"/i #include <linux/uaccess.h>' KernelSU-Next/kernel/hook/syscall_event_bridge.c
+          # Fix patch_memory.c for 4.14 compat (missing __pte_to_phys, copy_to_kernel_nofault, __flush_icache_range)
+          sed -i '/^#include "asm-generic\/fixmap.h"/a\
+          #include <linux/version.h>\
+          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 5, 0)\
+          #define __p4d_to_phys(p4d)  (p4d_val(p4d) & PHYS_MASK)\
+          #define __pud_to_phys(pud)  (pud_val(pud) & PHYS_MASK)\
+          #define __pmd_to_phys(pmd)  (pmd_val(pmd) & PHYS_MASK)\
+          #define __pte_to_phys(pte)  (pte_val(pte) & PHYS_MASK)\
+          #endif\
+          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)\
+          #define copy_to_kernel_nofault(dst, src, len) probe_kernel_write(dst, src, len)\
+          #endif\
+          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0)\
+          #define __flush_icache_range flush_icache_range\
+          #endif' KernelSU-Next/kernel/hook/arm64/patch_memory.c
           # Fix sucompat.c for 4.14 compat (strncpy_from_user_nofault -> strncpy_from_user)
           sed -i 's/strncpy_from_user_nofault(path/strncpy_from_user(path/g' KernelSU-Next/kernel/feature/sucompat.c
           # Fix util.h for 4.14 compat
