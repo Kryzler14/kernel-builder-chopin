@@ -1,0 +1,10 @@
+--- a/KernelSU-Next/kernel/supercall/dispatch.c	2026-07-26 11:26:47.783548450 +0000
++++ b/KernelSU-Next/kernel/supercall/dispatch.c	2026-07-26 11:26:47.791548450 +0000
+@@ -4,6 +4,7 @@
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
+ #include <linux/version.h>
++#include <linux/sched/task.h>
+ 
+ #include "uapi/supercall.h"
+ #include "supercall/internal.h"
