@@ -1,6 +1,6 @@
 --- a/KernelSU-Next/kernel/include/util.h
 +++ b/KernelSU-Next/kernel/include/util.h
-@@ -2,11 +2,22 @@
+@@ -2,11 +2,20 @@
  #define __KSU_H_UTIL
  
  #include "linux/fdtable.h" // IWYU pragma: keep
