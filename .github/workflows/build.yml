@@ -208,9 +208,28 @@ jobs:
 
           curl -LSs https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh | bash -
 
-          for p in fix-syscall-fn-type.patch fix-sulog-init.patch fix-pgtable-include.patch fix-ksu-close-fd.patch fix-add-util-include-event.patch fix-add-util-include-ksud.patch fix-sucompat-strncpy.patch; do
-            patch -p1 < ${{ github.workspace }}/patches/$p || { echo "Patch $p failed"; exit 2; }
-          done
+          patch -p1 < ${{ github.workspace }}/patches/fix-syscall-fn-type.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-sulog-init.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-pgtable-include.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-event.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-ksud.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-sucompat-strncpy.patch
+          # Fix util.h for 4.14 compat
+          sed -i '/^#include "linux\/fdtable.h"/a #include <linux/uaccess.h>' KernelSU-Next/kernel/include/util.h
+          sed -i '/^#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)$/,/^#endif$/c\
+          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 2, 0)\
+          #define ksu_close_fd(fd) sys_close(fd)\
+          #elif LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)\
+          #define ksu_close_fd ksys_close\
+          #else\
+          #define ksu_close_fd close_fd\
+          #endif\
+          \
+          #ifndef strncpy_from_user_nofault\
+          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)\
+          #define strncpy_from_user_nofault(dst, src, n) strncpy_from_user(dst, (const char __user *)(src), n)\
+          #endif\
+          #endif' KernelSU-Next/kernel/include/util.h
 
           echo -e "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
           echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
