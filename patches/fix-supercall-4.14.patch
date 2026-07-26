@@ -1,14 +1,18 @@
-diff --git a/KernelSU-Next/kernel/supercall/supercall.c b/KernelSU-Next/kernel/supercall/supercall.c
-index 53e9a0eb..2af4e868 100644
---- a/KernelSU-Next/kernel/supercall/supercall.c
-+++ b/KernelSU-Next/kernel/supercall/supercall.c
-@@ -11,6 +11,9 @@
+--- a/KernelSU-Next/kernel/supercall/supercall.c	2026-07-26 11:39:36.467999125 +0000
++++ b/KernelSU-Next/kernel/supercall/supercall.c	2026-07-26 11:39:36.515999125 +0000
+@@ -8,8 +8,14 @@
+ #include <linux/slab.h>
  #include <linux/syscalls.h>
  #include <linux/task_work.h>
- #include <linux/uaccess.h>
+-#include <linux/uaccess.h>
+ #include <linux/version.h>
 +#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)
 +#define TWA_RESUME true
 +#endif
- #include <linux/version.h>
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
++#define ksys_close(fd) sys_close(fd)
++#endif
++#include <linux/uaccess.h>
  #include <linux/utsname.h> // utsname() and uts_sem
  
+ #include "uapi/supercall.h"
