@@ -1,0 +1,10 @@
+diff --git a/KernelSU-Next/kernel/hook/syscall_event_bridge.c b/KernelSU-Next/kernel/hook/syscall_event_bridge.c
+index 11fe43a5..9b2ba1ae 100644
+--- a/KernelSU-Next/kernel/hook/syscall_event_bridge.c
++++ b/KernelSU-Next/kernel/hook/syscall_event_bridge.c
+@@ -1,4 +1,5 @@
+ #include "linux/compiler.h"
++#include <linux/uaccess.h>
+ #include "linux/cred.h"
+ #include "linux/jump_label.h"
+ #include "linux/printk.h"
