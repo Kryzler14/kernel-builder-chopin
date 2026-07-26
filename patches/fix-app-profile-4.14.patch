@@ -1,0 +1,14 @@
+diff --git a/KernelSU-Next/kernel/policy/app_profile.c b/KernelSU-Next/kernel/policy/app_profile.c
+index 4d5a7c2c..3766cdf3 100644
+--- a/KernelSU-Next/kernel/policy/app_profile.c
++++ b/KernelSU-Next/kernel/policy/app_profile.c
+@@ -88,7 +88,9 @@
+ 
+     current->seccomp.mode = 0;
+     current->seccomp.filter = NULL;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+     atomic_set(&current->seccomp.filter_count, 0);
++#endif
+     spin_unlock_irq(&current->sighand->siglock);
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 11, 0)

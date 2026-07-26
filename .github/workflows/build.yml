@@ -228,6 +228,7 @@ jobs:
           patch -p1 < ${{ github.workspace }}/patches/fix-pkg-observer-4.14.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-allowlist-4.14.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-supercall-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-app-profile-4.14.patch
 
           # Ensure required kernel config options
           grep -q "CONFIG_MODULES=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
