@@ -1,6 +1,6 @@
 --- a/KernelSU-Next/kernel/hook/syscall_hook.h
 +++ b/KernelSU-Next/kernel/hook/syscall_hook.h
-@@ -1,8 +1,10 @@
+@@ -1,8 +1,11 @@
  #ifndef __KSU_H_KSU_SYSCALL_HOOK
  #define __KSU_H_KSU_SYSCALL_HOOK
 -#include <asm/syscall.h>
@@ -9,5 +9,6 @@
 +#include <asm/syscall.h>
  typedef sys_call_ptr_t syscall_fn_t;
 +#elif defined(__aarch64__)
-+typedef void (*syscall_fn_t)(void);
++#include <linux/ptrace.h>
++typedef long (*syscall_fn_t)(const struct pt_regs *);
  #endif
