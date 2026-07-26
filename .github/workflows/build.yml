@@ -208,14 +208,9 @@ jobs:
 
           curl -LSs https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh | bash -
 
-          # Apply patches for 4.14 compatibility
-          patch -p1 < ${{ github.workspace }}/patches/fix-syscall-fn-type.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-sulog-init.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-pgtable-include.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-ksu-close-fd.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-event.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-ksud.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-sucompat-strncpy.patch
+          for p in fix-syscall-fn-type.patch fix-sulog-init.patch fix-pgtable-include.patch fix-ksu-close-fd.patch fix-add-util-include-event.patch fix-add-util-include-ksud.patch fix-sucompat-strncpy.patch; do
+            patch -p1 < ${{ github.workspace }}/patches/$p || { echo "Patch $p failed"; exit 2; }
+          done
 
           echo -e "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
           echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
