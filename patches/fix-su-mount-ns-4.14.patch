@@ -1,0 +1,13 @@
+diff --git a/KernelSU-Next/kernel/infra/su_mount_ns.c b/KernelSU-Next/kernel/infra/su_mount_ns.c
+index 595b93b4..ecf3ccff 100644
+--- a/KernelSU-Next/kernel/infra/su_mount_ns.c
++++ b/KernelSU-Next/kernel/infra/su_mount_ns.c
+@@ -13,7 +13,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/task_work.h>
+ #include <linux/version.h>
+-#include <uapi/linux/mount.h>
++#include <linux/mount.h>
+ 
+ #include "arch.h"
+ #include "klog.h" // IWYU pragma: keep

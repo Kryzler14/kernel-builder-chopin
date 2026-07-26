@@ -5,6 +5,9 @@ env:
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - chopin1
 
 jobs:
   Set-repos:
@@ -190,7 +193,7 @@ jobs:
           echo "ARCH=$ARCH" >> $GITHUB_OUTPUT
           echo "args=$args" >> $GITHUB_OUTPUT
 
-      - name: "😋 Setup KernelSU Next"
+      - name: "😋 Setup KernelSU Next v3.2.0"
         working-directory: ${{ env.KERNEL_NAME }}
         env:
           arch: ${{ steps.generate-args.outputs.ARCH }}
@@ -202,67 +205,41 @@ jobs:
           if [ -L "./drivers/kernelsu" ]; then
             rm -f "./drivers/kernelsu"
           fi
-          if [ -d "./KernelSU" ]; then
-            rm -rf "./KernelSU"
-          fi
 
-          curl -LSs https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh | bash -
+          # Clone KernelSU-Next v3.2.0 directly (not via setup.sh which tracks next/latest)
+          git clone --depth=1 --branch v3.2.0 https://github.com/KernelSU-Next/KernelSU-Next.git
 
-          patch -p1 < ${{ github.workspace }}/patches/fix-syscall-fn-type.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-sulog-init.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-pgtable-include.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-event.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-ksud.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-lsm-hook-listhead.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-klog-compat.patch
+          # Create symlink
+          ln -sf "$(realpath --relative-to=drivers KernelSU-Next/kernel)" drivers/kernelsu
+
+          # Modify drivers/Makefile and drivers/Kconfig
+          grep -q "kernelsu" drivers/Makefile || printf "\nobj-\$(CONFIG_KSU) += kernelsu/\n" >> drivers/Makefile
+          grep -q "source \"drivers/kernelsu/Kconfig\"" drivers/Kconfig || sed -i "/endmenu/i\source \"drivers/kernelsu/Kconfig\"" drivers/Kconfig
+
+          # Apply Linux 4.14 compatibility patches
+          patch -p1 < ${{ github.workspace }}/patches/fix-su-mount-ns-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-arm64-patch-memory-4.14.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-file-wrapper-4.14.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-event-queue-compat.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-seccomp-cache-compat.patch
-          # Fix syscall_event_bridge.c: add missing uaccess.h include
-          sed -i '/^#include "arch.h"/i #include <linux/uaccess.h>' KernelSU-Next/kernel/hook/syscall_event_bridge.c
-          # Fix patch_memory.c for 4.14 compat (missing __pte_to_phys, copy_to_kernel_nofault, __flush_icache_range)
-          sed -i '/^#include "asm-generic\/fixmap.h"/a\
-          #include <linux/version.h>\
-          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 5, 0)\
-          #define __p4d_to_phys(p4d)  (p4d_val(p4d) \& PHYS_MASK)\
-          #define __pud_to_phys(pud)  (pud_val(pud) \& PHYS_MASK)\
-          #define __pmd_to_phys(pmd)  (pmd_val(pmd) \& PHYS_MASK)\
-          #define __pte_to_phys(pte)  (pte_val(pte) \& PHYS_MASK)\
-          #endif\
-          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)\
-          #define copy_to_kernel_nofault(dst, src, len) probe_kernel_write(dst, src, len)\
-          #endif\
-          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0)\
-          #define __flush_icache_range flush_icache_range\
-          #endif' KernelSU-Next/kernel/hook/arm64/patch_memory.c
-          # Fix sucompat.c for 4.14 compat (strncpy_from_user_nofault -> strncpy_from_user)
-          sed -i 's/strncpy_from_user_nofault(path/strncpy_from_user(path/g' KernelSU-Next/kernel/feature/sucompat.c
-          # Fix util.h for 4.14 compat
-          sed -i '/^#include "linux\/fdtable.h"/a #include <linux/uaccess.h>' KernelSU-Next/kernel/include/util.h
-          sed -i '/^#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)$/,/^#endif$/c\
-          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 2, 0)\
-          #define ksu_close_fd(fd) sys_close(fd)\
-          #elif LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)\
-          #define ksu_close_fd ksys_close\
-          #else\
-          #define ksu_close_fd close_fd\
-          #endif\
-          \
-          #ifndef strncpy_from_user_nofault\
-          #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)\
-          #define strncpy_from_user_nofault(dst, src, n) strncpy_from_user(dst, (const char __user *)(src), n)\
-          #endif\
-          #endif' KernelSU-Next/kernel/include/util.h
+          patch -p1 < ${{ github.workspace }}/patches/fix-sucompat-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-ksud-integration-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-seccomp-cache-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-syscall-hook-type-4.14.patch
 
-          echo -e "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_KRETPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_EXT4_FS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_EXT4_FS_POSIX_ACL=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-          echo -e "CONFIG_KSU=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
-
-          cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          # Ensure required kernel config options
+          grep -q "CONFIG_MODULES=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
+            echo "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          grep -q "CONFIG_KPROBES=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
+            echo "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          grep -q "CONFIG_KRETPROBES=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
+            echo "CONFIG_KRETPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          grep -q "CONFIG_KPROBE_EVENTS=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
+            echo "CONFIG_KPROBE_EVENTS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          grep -q "CONFIG_EXT4_FS=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
+            echo "CONFIG_EXT4_FS=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          grep -q "CONFIG_EXT4_FS_POSIX_ACL=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
+            echo "CONFIG_EXT4_FS_POSIX_ACL=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
+          grep -q "CONFIG_KSU=y" arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }} || \
+            echo "CONFIG_KSU=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
       # - name: 开启lxc和docker配置
       #   working-directory: ${{ env.KERNEL_NAME }}
       #   env:

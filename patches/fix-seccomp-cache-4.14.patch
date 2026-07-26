@@ -1,15 +1,16 @@
 diff --git a/KernelSU-Next/kernel/infra/seccomp_cache.c b/KernelSU-Next/kernel/infra/seccomp_cache.c
-index 6511066b..b1845590 100644
+index 6511066b..bb49c14e 100644
 --- a/KernelSU-Next/kernel/infra/seccomp_cache.c
 +++ b/KernelSU-Next/kernel/infra/seccomp_cache.c
-@@ -8,6 +8,10 @@
- #include "klog.h" // IWYU pragma: keep
- #include "infra/seccomp_cache.h"
- 
+@@ -5,6 +5,12 @@
+ #include <linux/uaccess.h>
+ #include <linux/filter.h>
+ #include <linux/seccomp.h>
++#include <asm/unistd.h>
++
 +#ifndef SECCOMP_ARCH_NATIVE_NR
 +#define SECCOMP_ARCH_NATIVE_NR __NR_syscalls
 +#endif
 +
- struct action_cache {
- 	DECLARE_BITMAP(allow_native, SECCOMP_ARCH_NATIVE_NR);
- #ifdef SECCOMP_ARCH_COMPAT
+ #include "klog.h" // IWYU pragma: keep
+ #include "infra/seccomp_cache.h"
