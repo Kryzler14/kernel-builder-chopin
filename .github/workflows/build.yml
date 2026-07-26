@@ -212,7 +212,10 @@ jobs:
           patch -p1 < ${{ github.workspace }}/patches/fix-syscall-fn-type.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-sulog-init.patch
           patch -p1 < ${{ github.workspace }}/patches/fix-pgtable-include.patch
-          patch -p1 < ${{ github.workspace }}/patches/fix-compat-4.14.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-ksu-close-fd.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-event.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-add-util-include-ksud.patch
+          patch -p1 < ${{ github.workspace }}/patches/fix-sucompat-strncpy.patch
 
           echo -e "CONFIG_MODULES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
           echo -e "CONFIG_KPROBES=y" >> arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
